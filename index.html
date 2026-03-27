@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPR Generator - Complete System</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+  }
+
+  /* Login Page Styles */
+  .auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .auth-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+    max-width: 450px;
+    width: 100%;
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .auth-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .auth-body {
+    padding: 30px;
+  }
+
+  .auth-body .form-control {
+    border-radius: 10px;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+  }
+
+  .auth-body .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .auth-footer {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .auth-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* Main App Styles */
+  .main-app {
+    display: none;
+  }
+
+  .dpr-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+
+  .sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 20px;
+  }
+
+  .user-info {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+
+  .logout-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin-top: 10px;
+    width: 100%;
+    transition: all 0.3s;
+  }
+
+  .logout-btn:hover {
+    background: rgba(255,255,255,0.3);
+  }
+
+  .sidebar .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 12px 25px;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    border-left-color: #ffd700;
+  }
+
+  .sidebar .nav-link.active {
+    background: rgba(255,255,255,0.15);
+    border-left-color: #ffd700;
+    font-weight: 500;
+  }
+
+  .content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    background: #f4f6f9;
+  }
+
+  .progress {
+    height: 40px;
+    border-radius: 20px;
+    background: #e9ecef;
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 40px;
+    transition: width 0.3s ease;
+  }
+
+  .dpr-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dpr-section h5 {
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #667eea;
+    font-weight: 600;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+    padding: 12px 40px;
+    border-radius: 25px;
+    font-weight: 600;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .table thead th {
+    background: #f8f9fa;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+    .content {
+      margin-left: 0;
+    }
+    .dpr-container {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <i class="fas fa-file-alt fa-3x mb-3"></i>
+      <h2>DPR Generator</h2>
+      <p>Login to access your dashboard</p>
+    </div>
+    <div class="auth-body">
+      <div id="loginAlert" class="alert alert-danger" style="display: none;"></div>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
+    </div>
+  </div>
+</div>
+
+<!-- Register Page -->
+<div id="registerPage" class="auth-container" style="display: none;">
+  <div class="auth-card">
+    <div class="auth-header">
+      <i class="fas fa-user-plus fa-3x mb-3"></i>
+      <h2>Create Account</h2>
+      <p>Register to start using DPR Generator</p>
+    </div>
+    <div class="auth-body">
+      <div id="registerAlert" class="alert alert-danger" style="display: none;"></div>
+      <form id="registerForm">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="regName" placeholder="Enter your full name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="regEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="regPassword" placeholder="Create a password" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="regConfirmPassword" placeholder="Confirm your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+    <div class="auth-footer">
+      Already have an account? <a href="#" onclick="showLogin()">Login here</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Application -->
+<div id="mainApp" class="main-app">
+  <div class="dpr-container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h4 class="text-center mb-2">📄 DPR Generator</h4>
+        <div class="user-info">
+          <i class="fas fa-user-circle"></i>
+          <span id="userName">User</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+      <ul class="nav flex-column" id="sidebar-nav">
+        <li class="nav-item"><a class="nav-link active" href="#section1">1. Basic Info</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section2">2. Members</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section3">3. Product</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section4">4. Machinery</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section5">5. Market</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section6">6. Work Distribution</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section7">7. Financials</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section8">8. Projections</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section9">9. Infrastructure</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section10">10. SWOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section11">11. Social Impact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section12">12. Documents</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section13">13. Declaration</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section14">14. KYC</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section15">15. Credit History</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="progress mb-3">
+        <div class="progress-bar" id="progress-bar" style="width:0%">Step 1/15</div>
+      </div>
+
+      <form id="dpr-form">
+        <!-- SECTION 1: Basic Info -->
+        <div id="section1" class="dpr-section">
+          <h5>1. Basic Information</h5>
+          <input type="text" name="business_name" placeholder="Name of the proposed business unit" class="form-control mb-2">
+          <textarea name="business_desc" placeholder="Brief description of the business" class="form-control mb-2" rows="3"></textarea>
+          <input type="text" name="group_name" placeholder="Name of the group/organization" class="form-control mb-2">
+          <select class="form-select mb-2" name="entity_type">
+            <option>JLG</option>
+            <option>SHG</option>
+            <option>Partnership</option>
+            <option>Proprietorship</option>
+            <option>Pvt Ltd</option>
+            <option>Others</option>
+          </select>
+          <input type="number" name="total_members" placeholder="Total number of members/partners" class="form-control mb-2">
+          <input type="text" name="village" placeholder="Name of village/town" class="form-control mb-2">
+          <input type="text" name="block" placeholder="Name of block/taluk" class="form-control mb-2">
+          <input type="text" name="district" placeholder="Name of district" class="form-control mb-2">
+          <input type="text" name="state" placeholder="State" class="form-control mb-2">
+          <input type="text" name="contact_name" placeholder="Contact person name" class="form-control mb-2">
+          <input type="text" name="contact_number" placeholder="Contact number" class="form-control mb-2">
+          <input type="email" name="email" placeholder="Email address (optional)" class="form-control mb-2">
+          <input type="text" name="bank_name" placeholder="Bank name" class="form-control mb-2">
+          <input type="text" name="bank_branch" placeholder="Bank branch" class="form-control mb-2">
+          <input type="text" name="account_number" placeholder="Account number" class="form-control mb-2">
+          <input type="text" name="ifsc" placeholder="IFSC code" class="form-control mb-2">
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 2: Members -->
+        <div id="section2" class="dpr-section" style="display:none;">
+          <h5>2. Member Details</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr><th>#</th><th>Full Name</th><th>Role</th><th>Age</th><th>Gender</th><th>Education</th><th>ID Type</th><th>ID Number</th><th>Mobile</th><th>Photo</th><th>ID Proof</th><th>Action</th></tr>
+              </thead>
+              <tbody id="members-container"></tbody>
+            </table>
+          </div>
+          <button type="button" class="btn btn-secondary mb-2" id="add-member">+ Add Member</button>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 3: Product/Service Details -->
+        <div id="section3" class="dpr-section" style="display:none;">
+          <h5>3. Product/Service Details</h5>
+          <div class="mb-2"><label class="form-label">3.1 Primary product or service</label><textarea name="primary_product" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">3.2 Daily production capacity</label><input type="number" name="daily_capacity" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">3.3 Unit of capacity</label><select name="capacity_unit" class="form-select"><option>kg</option><option>liters</option><option>pieces</option><option>units</option></select></div>
+          <div class="mb-2"><label class="form-label">3.5 Key inputs/raw materials</label><textarea name="raw_materials" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">3.6 Average cost of input</label><input type="number" name="input_cost" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">3.8 Average selling price</label><input type="number" name="selling_price" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">3.10 Working days per year</label><input type="number" name="working_days" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">3.12 Seasonal variation?</label><br>
+            <div class="form-check-inline"><input type="radio" name="seasonal" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="seasonal" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 seasonal-field" style="display:none;"><label class="form-label">Off-season days</label><input type="number" name="off_season_days" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 4: Machinery -->
+        <div id="section4" class="dpr-section" style="display:none;">
+          <h5>4. Machinery & Equipment</h5>
+          <div class="mb-2"><label class="form-label">4.1 Machinery required</label><textarea name="machinery_list" class="form-control" rows="3"></textarea></div>
+          <div class="mb-2"><label class="form-label">4.2 Supplier name</label><input type="text" name="supplier_name" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">4.3 Supplier location</label><input type="text" name="supplier_location" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 5: Market -->
+        <div id="section5" class="dpr-section" style="display:none;">
+          <h5>5. Market Information</h5>
+          <div class="mb-2"><label class="form-label">5.1 Target customers</label><textarea name="target_customers" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">5.2 Sales location</label><textarea name="sales_location" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">5.3 Main competitors</label><textarea name="competitors" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">5.4 Unique selling point</label><textarea name="unique_selling_point" class="form-control" rows="2"></textarea></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 6: Work Distribution -->
+        <div id="section6" class="dpr-section" style="display:none;">
+          <h5>6. Work Distribution</h5>
+          <div class="mb-2"><label>Procurement</label><input type="number" name="procurement_staff" class="form-control"></div>
+          <div class="mb-2"><label>Production</label><input type="number" name="production_staff" class="form-control"></div>
+          <div class="mb-2"><label>Sales/Marketing</label><input type="number" name="sales_staff" class="form-control"></div>
+          <div class="mb-2"><label>Logistics</label><input type="number" name="logistics_staff" class="form-control"></div>
+          <div class="mb-2"><label>Quality Control</label><input type="number" name="quality_staff" class="form-control"></div>
+          <div class="mb-2"><label>Administration</label><input type="number" name="admin_staff" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 7: Financial Estimates -->
+        <div id="section7" class="dpr-section" style="display:none;">
+          <h5>7. Financial Estimates</h5>
+          <h6>Project Cost</h6>
+          <div class="mb-2"><label>Machinery</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Furniture</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Vehicles</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Building deposit</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Electricity deposit</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>License fees</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Raw material stock</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Other expenses</label><input type="number" class="form-control project-cost" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><strong>Total Project Cost</strong><input type="number" id="total-cost" class="form-control" readonly></div>
+          
+          <h6 class="mt-3">Source of Funds</h6>
+          <div class="mb-2"><label>Bank loan</label><input type="number" id="bank-loan" class="form-control" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Own contribution</label><input type="number" id="own-contribution" class="form-control" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><label>Subsidy/grant</label><input type="number" id="subsidy" class="form-control" placeholder="Amount (Rs.)"></div>
+          <div class="mb-2"><strong>Total Funds</strong><input type="number" id="total-funds" class="form-control" readonly></div>
+          <button type="button" class="btn btn-primary next-btn mt-3">Next →</button>
+        </div>
+
+        <!-- SECTION 8: Projections -->
+        <div id="section8" class="dpr-section" style="display:none;">
+          <h5>8. Annual Projections</h5>
+          <div class="mb-2"><label>Capacity utilization (%)</label><input type="number" name="capacity_utilization" class="form-control"></div>
+          <div class="mb-2"><label>Expected revenue (Year 1)</label><input type="number" name="revenue_year1" class="form-control"></div>
+          <div class="mb-2"><label>Expected expenses (Year 1)</label><input type="number" name="expenses_year1" class="form-control"></div>
+          <div class="mb-2"><label>Expected profit (Year 1)</label><input type="number" name="profit_year1" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 9: Infrastructure -->
+        <div id="section9" class="dpr-section" style="display:none;">
+          <h5>9. Infrastructure & Readiness</h5>
+          <div class="mb-2"><label>Workspace identified?</label><br>
+            <div class="form-check-inline"><input type="radio" name="workspace" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="workspace" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 workspace-field" style="display:none;"><label>Status</label><br>
+            <div class="form-check-inline"><input type="radio" name="workspace_status" value="owned"> Owned</div>
+            <div class="form-check-inline"><input type="radio" name="workspace_status" value="rented"> Rented</div>
+          </div>
+          <div class="mb-2 rent-field" style="display:none;"><label>Monthly rent</label><input type="number" name="monthly_rent" class="form-control"></div>
+          <div class="mb-2"><label>Time to start (months)</label><input type="number" name="start_time" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 10: SWOT -->
+        <div id="section10" class="dpr-section" style="display:none;">
+          <h5>10. SWOT Analysis</h5>
+          <textarea name="strengths" class="form-control mb-2" placeholder="Strengths" rows="2"></textarea>
+          <textarea name="weaknesses" class="form-control mb-2" placeholder="Weaknesses" rows="2"></textarea>
+          <textarea name="opportunities" class="form-control mb-2" placeholder="Opportunities" rows="2"></textarea>
+          <textarea name="threats" class="form-control mb-2" placeholder="Threats" rows="2"></textarea>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 11: Social Impact -->
+        <div id="section11" class="dpr-section" style="display:none;">
+          <h5>11. Social & Environmental Impact</h5>
+          <input type="number" name="local_employment" class="form-control mb-2" placeholder="Local employment">
+          <input type="number" name="youth_employment" class="form-control mb-2" placeholder="Youth employment">
+          <input type="number" name="women_employment" class="form-control mb-2" placeholder="Women employment">
+          <div class="mb-2"><label>Eco-friendly practices?</label><br>
+            <div class="form-check-inline"><input type="radio" name="eco_friendly" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="eco_friendly" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 eco-field" style="display:none;"><textarea name="eco_description" class="form-control" placeholder="Describe eco-friendly practices" rows="2"></textarea></div>
+          <div class="mb-2"><label>Provide training?</label><br>
+            <div class="form-check-inline"><input type="radio" name="training" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="training" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 training-field" style="display:none;"><textarea name="training_description" class="form-control" placeholder="Describe training" rows="2"></textarea></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 12: Documents -->
+        <div id="section12" class="dpr-section" style="display:none;">
+          <h5>12. Documents Upload</h5>
+          <div class="mb-2"><label>Group photo</label><input type="file" name="group_photo" class="form-control"></div>
+          <div class="mb-2"><label>ID proofs</label><input type="file" name="id_proofs" class="form-control" multiple></div>
+          <div class="mb-2"><label>Bank passbook</label><input type="file" name="bank_passbook" class="form-control"></div>
+          <div class="mb-2"><label>Machinery quotation</label><input type="file" name="machinery_quotation" class="form-control"></div>
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 13: Declaration -->
+        <div id="section13" class="dpr-section" style="display:none;">
+          <h5>13. Declaration</h5>
+          <input type="text" name="declarant_name" class="form-control mb-2" placeholder="Name of declarant">
+          <input type="text" name="designation" class="form-control mb-2" placeholder="Designation">
+          <input type="text" name="place" class="form-control mb-2" placeholder="Place">
+          <input type="date" name="declaration_date" class="form-control mb-2" id="declaration-date">
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 14: KYC -->
+        <div id="section14" class="dpr-section" style="display:none;">
+          <h5>14. KYC & Compliance</h5>
+          <select name="kyc_type" class="form-select mb-2"><option>Aadhaar</option><option>PAN</option><option>Voter ID</option></select>
+          <input type="text" name="kyc_number" class="form-control mb-2" placeholder="KYC number">
+          <textarea name="permanent_address" class="form-control mb-2" placeholder="Permanent address" rows="2"></textarea>
+          <div class="mb-2"><label>GST registration?</label><br>
+            <div class="form-check-inline"><input type="radio" name="gst" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="gst" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 gst-field" style="display:none;"><input type="text" name="gst_number" class="form-control" placeholder="GST number"></div>
+          <div class="mb-2"><label>Udyam registration?</label><br>
+            <div class="form-check-inline"><input type="radio" name="udyam" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="udyam" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 udyam-field" style="display:none;"><input type="text" name="udyam_number" class="form-control" placeholder="Udyam number"></div>
+          <input type="text" name="business_pan" class="form-control mb-2" placeholder="PAN of business">
+          <button type="button" class="btn btn-primary next-btn">Next →</button>
+        </div>
+
+        <!-- SECTION 15: Credit History -->
+        <div id="section15" class="dpr-section" style="display:none;">
+          <h5>15. Credit History</h5>
+          <div class="mb-2"><label>Taken loan before?</label><br>
+            <div class="form-check-inline"><input type="radio" name="loan_before" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="loan_before" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 loan-fields" style="display:none;">
+            <select name="loan_type" class="form-select mb-2"><option>Personal</option><option>Business</option></select>
+            <input type="text" name="lending_institution" class="form-control mb-2" placeholder="Lending institution">
+            <input type="number" name="loan_amount" class="form-control mb-2" placeholder="Loan amount">
+            <input type="number" name="loan_outstanding" class="form-control mb-2" placeholder="Outstanding amount">
+            <input type="number" name="cibil_score" class="form-control mb-2" placeholder="CIBIL score">
+          </div>
+          <div class="mb-2 default-field" style="display:none;">
+            <label>Any defaults?</label><br>
+            <div class="form-check-inline"><input type="radio" name="loan_defaults" value="yes"> Yes</div>
+            <div class="form-check-inline"><input type="radio" name="loan_defaults" value="no" checked> No</div>
+          </div>
+          <div class="mb-2 default-explain-field" style="display:none;"><textarea name="defaults_explanation" class="form-control" placeholder="Explain defaults" rows="2"></textarea></div>
+          <button type="submit" class="btn btn-success">✅ Submit DPR</button>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
